@@ -288,3 +288,26 @@ function init(){
 }
 window.addEventListener('resize', ()=>{ fit(); draw(); });
 init();
+
+
+// ===== PWA Service Worker & A2HS =====
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=> navigator.serviceWorker.register('sw.js'));
+}
+let deferredPrompt=null;
+const a2hsBar=document.getElementById('a2hsBar');
+const a2hsBtn=document.getElementById('a2hsBtn');
+const iosHint=document.getElementById('iosHint');
+function isStandalone(){
+  return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone===true);
+}
+window.addEventListener('beforeinstallprompt', (e)=>{
+  e.preventDefault(); deferredPrompt=e;
+  if(!isStandalone()){ a2hsBar.style.display='block'; }
+});
+window.addEventListener('appinstalled', ()=>{ a2hsBar.style.display='none'; deferredPrompt=null; });
+a2hsBtn?.addEventListener('click', async()=>{
+  if(deferredPrompt){ deferredPrompt.prompt(); const choice=await deferredPrompt.userChoice; deferredPrompt=null; if(choice.outcome!=='dismissed'){ a2hsBar.style.display='none'; } }
+});
+(function(){ const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent); if(isIOS && !isStandalone()){ iosHint.style.display='inline'; a2hsBar.style.display='block'; } })();
+

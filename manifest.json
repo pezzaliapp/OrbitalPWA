@@ -1,6 +1,6 @@
 {
-  "name": "Orbita — 3D ellittica (PWA)",
-  "short_name": "Orbita3D",
+  "name": "Orbita — v7 3D + AR",
+  "short_name": "Orbita3D AR",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0b1b2b",
