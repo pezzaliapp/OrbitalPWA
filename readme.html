@@ -6,8 +6,10 @@
   <title>OrbitalPWA — Documentazione (README)</title>
   <style>
     :root{--bg:#0b1b2b;--panel:#0f243a;--ink:#eaf2ff;--muted:#9fb6d1;--accent:#6fd3ff;--border:#24425f;}
-    html,body{height:100%} body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;line-height:1.6}
-    header{position:sticky;top:0;background:var(--panel);border-bottom:1px solid var(--border);padding:12px;display:flex;gap:12px;align-items:center;z-index:10}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;line-height:1.6}
+    header{position:sticky;top:0;background:var(--panel);border-bottom:1px solid var(--border);
+           padding:12px;display:flex;gap:12px;align-items:center;z-index:10}
     header h1{margin:0;font-size:18px;color:#cfe6ff;flex:1}
     header a.button{background:var(--accent);color:#00243a;padding:10px 16px;border-radius:12px;font-weight:700;text-decoration:none;white-space:nowrap}
     main{max-width:1000px;margin:0 auto;padding:20px}
@@ -15,7 +17,7 @@
     p,li{color:#eaf2ff}
     code{background:#163452;padding:2px 4px;border-radius:4px;font-family:ui-monospace,Consolas,Menlo,monospace}
     pre{background:#081522;border:1px solid #20374e;padding:12px;border-radius:10px;overflow:auto}
-    ul,ol{padding-left:20px}
+    ul,ol{padding-left:22px}
     a{color:var(--accent)}
     hr{border:0;border-top:1px solid var(--border);margin:24px 0}
     .muted{color:var(--muted)}
@@ -26,259 +28,83 @@
     <h1>OrbitalPWA — Documentazione (README)</h1>
     <a href="https://www.alessandropezzali.it/OrbitalPWA/" class="button">🚀 Avvia la App</a>
   </header>
-  <main>
-    <h1>OrbitalPWA — Simulatore Orbitale 3D (PWA + AR) per studi CubeSat</h1>
-
-<p><strong>OrbitalPWA</strong> è una web-app <strong>installabile</strong> (PWA) per la visualizzazione e l’analisi rapida di orbite <strong>circolari</strong> ed <strong>ellittiche</strong> attorno a corpi planetari (Terra, Luna, Marte, Giove).  </p>
-<p>È pensata come strumento <strong>didattico e di pre-studio</strong> per missioni <strong>CubeSat</strong>: calcolo del periodo, velocità, quote perigeo/apogeo, orientamento del piano orbitale e <strong>animazione 3D</strong> con <strong>precessione</strong> opzionale. Include inoltre una modalità <strong>AR (Realtà Aumentata)</strong> per presentazioni e dimostrazioni sceniche.</p>
-
-<hr>
-
-<h2>Funzioni principali</h2>
-
-<ul>
-<li><strong>Modello fisico</strong></li>
-<li>Orbite <strong>circolari</strong> ed <strong>ellittiche</strong> con parametri: <code>hp</code> (perigeo), <code>ha</code> (apogeo).</li>
-<li>Parametri orbitali 3D: <strong>i</strong> (inclinazione), <strong>Ω</strong> (RAAN), <strong>ω</strong> (argomento del pericentro).</li>
-<li><strong>Moto kepleriano</strong>: risoluzione numerica dell’equazione di Keplero <code>M = E − e sin E</code>, conversione a <strong>anomalia vera</strong> <code>ν</code>.</li>
-<li><strong>Vis-viva</strong> per la <strong>velocità istantanea</strong> <code>v = √( μ ( 2/r − 1/a ) )</code>.</li>
-<li><strong>Periodo</strong> <code>T = 2π √(a³ / μ)</code>; <strong>moto medio</strong> <code>n = √(μ/a³)</code>.</li>
-<li>Scelta del corpo centrale (Terra/Luna/Marte/Giove) con <code>μ</code> pre-impostato o <strong>inserimento diretto di μ = G·M<code>.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ul&gt;
-&lt;li&gt;</strong>Visualizzazione &amp;amp; animazione<strong>&lt;/li&gt;
-&lt;li&gt;Canvas 3D con </strong>prospettiva<strong>: distinzione </strong>fronte/retro<strong> dell’orbita (linea piena vs attenuata).&lt;/li&gt;
-&lt;li&gt;</strong>Precessione<strong> dell’ellisse: rotazione continua del </strong>piano orbitale<strong> (Ω·) e del </strong>pericentro<strong> (ω·).&lt;/li&gt;
-&lt;li&gt;</strong>Assi/guide<strong>: linea dei nodi (</strong>Ω<strong>) e direzione del pericentro (</strong>ω<strong>) con </strong>frecce/archi<strong> dinamici.&lt;/li&gt;
-&lt;li&gt;</strong>Marker<strong> su </strong>Perigeo (ν = 0)<strong> e </strong>Apogeo (ν = π)<strong>.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ul&gt;
-&lt;li&gt;</strong>Dati mostrati in tempo reale<strong>&lt;/li&gt;
-&lt;li&gt;</strong>v<strong> (km/s), </strong>T<strong> (formato h-m-s), </strong>e<strong>, </strong>hp/ha<strong> (km </strong>sopra superficie<strong>),&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;    </strong>rₚ/rₐ<strong> (km </strong>dal centro<strong>).&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Etichette di </strong>pianeta<strong> e </strong>satellite<strong>, colori distintivi per ciascun corpo.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ul&gt;
-&lt;li&gt;</strong>Modalità di rendering<strong>&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ol start=&quot;1&quot;&gt;
-&lt;li&gt;</strong>Rotazioni reali<strong> — la precessione segue i tuoi Ω·/ω·.&lt;/li&gt;
-&lt;li&gt;</strong>Realtà aumentata (AR, beta)<strong> — sfondo </strong>camera<strong> e </strong>vista<strong> pilotata dall’</strong>orientamento del dispositivo<strong>.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;ul&gt;
-&lt;li&gt;</strong>PWA<strong>&lt;/li&gt;
-&lt;li&gt;</strong>Aggiungi alla Home<strong> (A2HS), </strong>offline<strong> (cache con Service Worker), manifest/icone.&lt;/li&gt;
-&lt;li&gt;Build parallela </strong>No-SW<strong> per debugging senza cache.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr&gt;
-
-&lt;h2&gt;Per cosa è utile in studi CubeSat&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;</strong>Dimensionamento missione preliminare<strong> (early-stage):&lt;/li&gt;
-&lt;li&gt;Stima di </strong>periodo T<strong>, velocità media e variazioni lungo l’orbita (perigeo/apogeo).&lt;/li&gt;
-&lt;li&gt;Esplorazione di </strong>LEO<strong> tipiche (300–800 km), </strong>MEO/GEO<strong> dimostrative.&lt;/li&gt;
-&lt;li&gt;</strong>Visualizzazione della <strong>geometria orbitale</strong>:&lt;/li&gt;
-&lt;li&gt;Effetto 3D intuitivo di <strong>i</strong>, <strong>Ω</strong>, <strong>ω</strong>, e della <strong>precessione</strong> controllata.&lt;/li&gt;
-&lt;li&gt;Marker e valori <strong>hp/ha</strong> per validare rapidamente ipotesi di quota.&lt;/li&gt;
-&lt;li&gt;<strong>Comunicazione &amp;amp; Outreach</strong>:&lt;/li&gt;
-&lt;li&gt;<strong>Modalità AR</strong> per demo live con smartphone/tablet.&lt;/li&gt;
-&lt;li&gt;“Aggiungi alla Home” per utilizzo <strong>offline</strong> in aula o laboratorio.&lt;/li&gt;
-&lt;li&gt;<strong>Prototipazione didattica</strong>:&lt;/li&gt;
-&lt;li&gt;Confronto tra diversi corpi centrali cambiando <strong>μ</strong>.&lt;/li&gt;
-&lt;li&gt;Replica di passaggi storici (preset <strong>CASIO FX-750P</strong>).&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&amp;gt; <strong>Nota</strong>: non è un propagatore “flight grade”. La <strong>precessione</strong> implementata è <strong>parametrica</strong> (Ω·/ω· impostati dall’utente) e non include perturbazioni (es. J2, drag, SRP, terzi corpi, non sfericità, GR, ecc.).&lt;/p&gt;
-
-&lt;hr&gt;
-
-&lt;h2&gt;Guida rapida (step-by-step)&lt;/h2&gt;
-
-&lt;ol start=&quot;1&quot;&gt;
-&lt;li&gt;<strong>Apertura</strong>&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;Apri </code>index.html<code> (consigliato via <strong>HTTPS</strong> se vuoi la camera in AR).&lt;/li&gt;
-&lt;li&gt;Su mobile/desktop puoi <strong>installare</strong> la PWA (barra “Aggiungi alla Home”).&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ol start=&quot;2&quot;&gt;
-&lt;li&gt;<strong>Seleziona il corpo centrale</strong>&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;Menu <strong>Corpo celeste</strong>: Terra, Luna, Marte, Giove.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;     Puoi anche inserire <strong>μ</strong> manualmente (spunta “Usa μ = G·M”).&lt;/p&gt;
-
-&lt;ol start=&quot;3&quot;&gt;
-&lt;li&gt;<strong>Definisci l’orbita</strong>&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;<strong>Ellittica</strong> (default): inserisci <strong>hp</strong> e <strong>ha</strong> (km sopra superficie).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;     Il codice calcola </code>a = (rp+ra)/2<code> ed </code>e = (ra−rp)/(ra+rp)<code>, con </code>rp = R + hp<code>, </code>ra = R + ha<code>.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;<strong>Circolare</strong>: scegli <strong>Quota</strong> (km) → </code>r = R + quota<code>.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ol start=&quot;4&quot;&gt;
-&lt;li&gt;<strong>Orientamento 3D</strong>&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;Imposta <strong>i</strong>, <strong>Ω</strong>, <strong>ω</strong> tramite slider (vedi archi e frecce che si aggiornano).&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ol start=&quot;5&quot;&gt;
-&lt;li&gt;<strong>Animazione</strong>&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;Premi <strong>Avvia</strong>. Il satellite segue Keplero; in tempo reale vedi <strong>v</strong>, <strong>T</strong>, <strong>e</strong> e marker <strong>Perigeo/Apogeo</strong>.&lt;/li&gt;
-&lt;li&gt;Usa <strong>Velocità ×</strong> per accelerare il tempo simulato.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ol start=&quot;6&quot;&gt;
-&lt;li&gt;<strong>Precessione (roto-traslazione dell’ellisse)</strong>&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;Abilita <strong>“Ruota l’ellisse”</strong>.&lt;/li&gt;
-&lt;li&gt;Imposta <strong>Ω· (°/s)</strong> e/o <strong>ω· (°/s)</strong>: l’<strong>intera ellisse ruota</strong> nello spazio mentre il satellite avanza.&lt;/li&gt;
-&lt;li&gt;Opzionale: <strong>Demo precessione</strong> per valori già “scenici”.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ol start=&quot;7&quot;&gt;
-&lt;li&gt;<strong>Modalità AR (Realtà Aumentata)</strong>&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;Seleziona <strong>AR</strong>. Consenti <strong>fotocamera</strong> e <strong>sensori</strong>: lo sfondo diventa il <strong>video live</strong> e la vista ruota con il dispositivo.&lt;/li&gt;
-&lt;li&gt;Requisiti: <strong>HTTPS</strong>, permessi per <strong>DeviceOrientation</strong> (su iOS viene richiesto dall’app).&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr&gt;
-
-&lt;h2&gt;Modello fisico e implementazione&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;<strong>Equazioni chiave</strong>&lt;/li&gt;
-&lt;li&gt;</code>n = √(μ/a³)<code>; </code>T = 2π/n<code>.&lt;/li&gt;
-&lt;li&gt;<strong>Keplero</strong>: dato </code>M(t) = n·t<code>, risolviamo </code>M = E − e sin E<code> con <strong>Newton–Raphson</strong>;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;    </code>ν = atan2( √(1−e²) sin E, cos E − e )<code>.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;<strong>Vis-viva</strong>: </code>v = √( μ ( 2/r − 1/a ) )<code>.&lt;/li&gt;
-&lt;li&gt;<strong>Rotazioni</strong>: da piano orbitale a ECI con </code>Rz(Ω) · Rx(i) · Rz(ω)<code>.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ul&gt;
-&lt;li&gt;<strong>Geometria ellittica</strong>&lt;/li&gt;
-&lt;li&gt;</code>rp = a(1−e)<code>, </code>ra = a(1+e)<code>; nell’UI si lavora con <strong>hp/ha</strong> e raggio del corpo <strong>R</strong>.&lt;/li&gt;
-&lt;li&gt;Marker su <strong>ν = 0</strong> (perigeo) e <strong>ν = π</strong> (apogeo).&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ul&gt;
-&lt;li&gt;<strong>Rendering</strong>&lt;/li&gt;
-&lt;li&gt;Proiezione prospettica semplice (FOV fisso), separazione <strong>fronte/retro</strong> dell’orbita.&lt;/li&gt;
-&lt;li&gt;<strong>Assi/guide</strong> per <strong>Ω</strong> (linea nodale) e <strong>ω</strong> (direzione del pericentro).&lt;/li&gt;
-&lt;li&gt;<strong>Precessione</strong>: aggiornamento continuo di <strong>Ω</strong> e <strong>ω</strong> (</code>Ω += Ω··Δt<code>, </code>ω += ω··Δt<code>).&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr&gt;
-
-&lt;h2&gt;Struttura del progetto&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code class=&quot;&quot;&gt;OrbitalPWA/
-├─ index.html          # UI, inclusione script, manifest (PWA)
-├─ app.v7.js           # logica fisica + animazione + AR + precessione
-├─ manifest.json       # nome, icone, tema
-├─ sw.js               # Service Worker (cache offline)
-└─ icons/
-   ├─ icon-192.png
-   └─ icon-512.png&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&amp;gt; Per debugging, è disponibile anche una build <strong>No-SW</strong> (senza Service Worker) per evitare cache aggressive durante gli aggiornamenti.&lt;/p&gt;
-
-&lt;hr&gt;
-
-&lt;h2&gt;Requisiti e compatibilità&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;<strong>Browser</strong>: Chrome/Edge/Firefox/Safari moderni.&lt;/li&gt;
-&lt;li&gt;<strong>AR (camera + sensori)</strong>: <strong>HTTPS</strong> obbligatorio; su iOS è necessaria l’autorizzazione esplicita a </code>DeviceOrientationEvent<code>.&lt;/li&gt;
-&lt;li&gt;<strong>Installazione PWA</strong>: supportata su Android/Chrome/Edge; su iOS tramite “Condividi → Aggiungi a Home”.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr&gt;
-
-&lt;h2&gt;Limitazioni note&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Modello <strong>kepleriano</strong> ideale (2-body): <strong>non</strong> include <strong>J2</strong>, <strong>drag atmosferico</strong>, <strong>radiazione solare</strong>, <strong>terzi corpi</strong>, <strong>cessi di massa</strong>, <strong>non sfericità</strong>, <strong>relatività</strong>, ecc.&lt;/li&gt;
-&lt;li&gt;La <strong>precessione</strong> con <strong>Ω·/ω·</strong> è <strong>didattica</strong>/parametrica (non derivata da perturbazioni fisiche).&lt;/li&gt;
-&lt;li&gt;Non è incluso il <strong>ground-track</strong> né l’import <strong>TLE</strong> (funzionalità possibili come estensioni future).&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr&gt;
-
-&lt;h2&gt;Roadmap suggerita&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Import <strong>TLE</strong> e confronto con parametri (convertitore a, e, i, Ω, ω, M₀).&lt;/li&gt;
-&lt;li&gt;<strong>J2</strong> (regressione RAAN/ω) e <strong>drag</strong> con densità semplice (es. NRLMSISE-00 semplificato).&lt;/li&gt;
-&lt;li&gt;<strong>Ground-track</strong> e passaggi su stazioni.&lt;/li&gt;
-&lt;li&gt;<strong>ADCS</strong> base: set di reference frames e quaternioni per pannelli/antenne.&lt;/li&gt;
-&lt;li&gt;Esportazione <strong>snapshot</strong>/GIF e <strong>report</strong> PDF dei parametri.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr&gt;
-
-&lt;h2&gt;Utilizzo / Deploy&lt;/h2&gt;
-
-&lt;ol start=&quot;1&quot;&gt;
-&lt;li&gt;<strong>Locale</strong>: doppio click su </code>index.html<code> (funziona; AR potrebbe richiedere HTTPS e permessi).  &lt;/li&gt;
-&lt;li&gt;<strong>Hosting</strong>: carica l’intera cartella in un <strong>percorso nuovo</strong> ad ogni release per evitare cache SW.  &lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;Se sostituisci i file nello <strong>stesso percorso</strong>, fai <strong>Hard Reload</strong> e, se serve, <strong>Unregister</strong> del Service Worker precedente (DevTools → Application → Service Workers).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ol start=&quot;3&quot;&gt;
-&lt;li&gt;<strong>Installazione</strong>: apri la pagina e usa la barra <strong>“Aggiungi alla Home”</strong> (A2HS).&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;hr&gt;
-
-&lt;h2&gt;Riferimenti storici (opzionale)&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;<strong>Preset CASIO FX-750P (1984)</strong>: include un profilo che replica i passaggi numerici del manuale storico per un confronto didattico con i valori moderni di </code>μ<code>, </code>R<code>, </code>G<code>.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr&gt;
-
-&lt;h2&gt;Licenza e attribuzioni&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;<strong>Licenza</strong>: rilasciato con licenza <strong>MIT</strong> (© 2025 Alessandro Pezzali).&lt;/li&gt;
-&lt;li&gt;Fa parte di <strong><a href="https://github.com/pezzaliapp/pezzalistack.git" target="_blank" rel="noopener">PezzaliStack</a></strong>, la libreria privata open source di strumenti per studi, simulazioni e prototipazione <strong>CubeSat</strong>.&lt;/li&gt;
-&lt;li&gt;Dati planetari (</code>μ`, raggi medi) da fonti pubbliche standard (NASA, ESA).</li>
-</ul>
-
-<hr>
-
-<h2>Contatti</h2>
-
-<p>Se desideri estendere l’app per i tuoi <strong>studi CubeSat</strong> (TLE, J2/drag, ground-track, ADCS), aggiungi richieste/issue nel repository o contattami direttamente.</p>
-
-<hr>
-
-<p><strong>Versione corrente</strong>: v7.1 (PWA + AR, precessione attiva, marker perigeo/apogeo, card hp/ha e rₚ/rₐ).  </p>
-<p><strong>Autore</strong>: Progetto didattico personalizzato per studi <strong>CubeSat</strong> nell’ambito di <strong>PezzaliStack</strong>.</p>
+  <main id="content">
+    <p class="muted">Caricamento documentazione…</p>
   </main>
+
+  <script>
+  // Lightweight Markdown renderer (single level lists, code fences, inline formatting)
+  function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m]));}
+  function mdToHtml(md){
+    const lines = md.replace(/\r\n/g,"\n").split("\n");
+    let html=[], i=0, inCode=false, code=[];
+    function flushCode(){ if(code.length){ html.push("<pre><code>"+escapeHtml(code.join("\n"))+"</code></pre>"); code=[]; } }
+    function flushPara(buf){ if(buf.trim()){ html.push("<p>"+buf.trim()+"</p>"); } }
+    while(i<lines.length){
+      let L=lines[i];
+
+      // Fenced code
+      if(/^```/.test(L)){
+        if(!inCode){ inCode=true; i++; continue; } else { inCode=false; flushCode(); i++; continue; }
+      }
+      if(inCode){ code.push(L); i++; continue; }
+
+      // Headings
+      let hm=L.match(/^(#{1,6})\s+(.*)$/);
+      if(hm){ flushCode(); html.push("<h"+hm[1].length+">"+escapeHtml(hm[2])+"</h"+hm[1].length+">"); i++; continue; }
+
+      // Horizontal rule
+      if(/^\s*[-*_]{3,}\s*$/.test(L)){ html.push("<hr>"); i++; continue; }
+
+      // Lists
+      if(/^\s*[-+*]\s+/.test(L) || /^\s*\d+\.\s+/.test(L)){
+        let isOrdered=/^\s*\d+\.\s+/.test(L); let arr=[];
+        while(i<lines.length && (/^\s*[-+*]\s+/.test(lines[i]) || /^\s*\d+\.\s+/.test(lines[i]))){
+          let x=lines[i];
+          x = x.replace(/^\s*[-+*]\s+/, "");
+          x = x.replace(/^\s*\d+\.\s+/, "");
+          arr.push(x);
+          i++;
+        }
+        const tag=isOrdered?"ol":"ul";
+        html.push("<"+tag+">"); for(const it of arr){ html.push("<li>"+inline(it)+"</li>"); } html.push("</"+tag+">");
+        continue;
+      }
+
+      // Blank line
+      if(/^\s*$/.test(L)){ html.push(""); i++; continue; }
+
+      // Paragraph
+      html.push("<p>"+inline(L)+"</p>");
+      i++;
+    }
+
+    function inline(s){
+      s=escapeHtml(s);
+      // code
+      s=s.replace(/`([^`]+)`/g,(m,p1)=>"<code>"+p1+"</code>");
+      // bold **text**
+      s=s.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>");
+      // italic *text*
+      s=s.replace(/(^|[^*])\*([^*\n]+)\*/g,"$1<em>$2</em>");
+      // links [text](url)
+      s=s.replace(/\[([^\]]+)\]\(([^)]+)\)/g,(m,t,u)=>'<a href="'+escapeHtml(u)+'" target="_blank" rel="noopener">'+escapeHtml(t)+'</a>');
+      return s;
+    }
+
+    return html.join("\n");
+  }
+
+  async function loadReadme(){
+    try{
+      const r = await fetch('README.md', {cache:'no-cache'});
+      const txt = await r.text();
+      document.getElementById('content').innerHTML = mdToHtml(txt);
+    }catch(e){
+      document.getElementById('content').innerHTML = '<p>Impossibile caricare README.md</p>';
+    }
+  }
+  loadReadme();
+  </script>
 </body>
 </html>
