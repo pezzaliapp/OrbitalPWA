@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Orbita — v6 (ellisse 3D + precessione) — no SW</title>
+  <title>Orbita — v7 (3D + precessione + AR beta) — no SW</title>
   <meta name="theme-color" content="#0b1b2b">
   <style>
-    :root{--bg:#0b1b2b;--panel:#0f243a;--ink:#eaf2ff;--muted:#9fb6d1;--accent:#6fd3ff;--border:#24425f;}
+    :root{--bg:#0b1b2b;--panel:#0f243a;--ink:#eaf2ff;--muted:#9fb6d1;--accent:#6fd3ff;--border:#24425f;--node:#8aff98;--peric:#ffd36e;}
     *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif}
     html,body{height:100%}
     body{margin:0;background:var(--bg);color:var(--ink);display:flex;flex-direction:column}
@@ -27,7 +27,9 @@
     .muted{color:var(--muted)}
     .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
     .stat{background:#0b1e31;border:1px solid var(--border);border-radius:10px;padding:8px}
-    canvas{width:100%;height:auto;border-radius:12px;border:1px solid var(--border);background:#081522;display:block}
+    .simWrap{position:relative}
+    video.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:12px}
+    canvas{position:relative;width:100%;height:auto;border-radius:12px;border:1px solid var(--border);background:#081522;display:block}
     .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
     .pill{padding:2px 8px;border-radius:999px;border:1px solid var(--border);color:#bcd1ea;font-size:12px}
     .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -36,7 +38,7 @@
 </head>
 <body>
   <header>
-    <h1>Orbita — v6 (ellisse 3D + precessione)</h1>
+    <h1>Orbita — v7 (3D + precessione + AR beta)</h1>
     <span class="tag">no Service Worker</span>
   </header>
 
@@ -66,11 +68,6 @@
         </div>
       </div>
 
-      <div class="grid2" id="circularBox" style="display:none">
-        <div><label for="alt_km">Quota (km) — circolare</label><input id="alt_km" type="number" value="500"></div>
-        <div><label for="r_km">Raggio del corpo (km)</label><input id="r_km" type="number" value="6371"></div>
-      </div>
-
       <div class="grid2" id="ellipticBox">
         <div><label for="hp_km">Perigeo hp (km)</label><input id="hp_km" type="number" value="300"></div>
         <div><label for="ha_km">Apogeo ha (km)</label><input id="ha_km" type="number" value="10000"></div>
@@ -97,35 +94,52 @@
       </div>
 
       <div class="row3">
-        <div><label for="OmegaDot">Ω· (°/s)</label><input id="OmegaDot" type="number" value="0.0" step="0.1"></div>
-        <div><label for="omegaDot">ω· (°/s)</label><input id="omegaDot" type="number" value="10.0" step="0.1"></div>
+        <div><label for="OmegaDot">Ω· (°/s) — piano</label><input id="OmegaDot" type="number" value="0.0" step="0.1"></div>
+        <div><label for="omegaDot">ω· (°/s) — pericentro</label><input id="omegaDot" type="number" value="10.0" step="0.1"></div>
         <div><label><input id="precessionOn" type="checkbox" checked> Ruota l’ellisse</label></div>
       </div>
 
-      <div class="row" style="margin-top:8px">
-        <button id="calcBtn">Calcola</button>
-        <button id="playBtn">⏵︎ Avvia</button>
-        <button id="pauseBtn" class="ghost">⏸︎ Pausa</button>
-        <span class="pill">Velocità × <span id="spdTxt">60</span></span>
-        <input id="speed" type="range" min="0.1" max="400" value="60" step="0.1" style="width:200px">
+      <h2>Modalità di visualizzazione</h2>
+      <div class="row">
+        <div>
+          <label for="vizMode">Seleziona</label>
+          <select id="vizMode">
+            <option value="real">Rotazioni reali (Ω·/ω·)</option>
+            <option value="ar">Realtà aumentata (AR beta)</option>
+          </select>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <div class="controls">
+            <button id="calcBtn">Calcola</button>
+            <button id="playBtn">⏵︎ Avvia</button>
+            <button id="pauseBtn" class="ghost">⏸︎ Pausa</button>
+            <span class="pill">Velocità × <span id="spdTxt">60</span></span>
+            <input id="speed" type="range" min="0.1" max="400" value="60" step="0.1" style="width:200px">
+          </div>
+        </div>
       </div>
     </section>
 
     <section class="card">
-      <h2>Risultati</h2>
-      <div id="out" class="result"></div>
-      <div class="stats">
+      <h2>Simulazione 3D</h2>
+      <div class="simWrap">
+        <video id="bgVideo" class="bg" autoplay playsinline muted style="display:none"></video>
+        <canvas id="orbCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <span class="pill">Vista AR: muovi il telefono per ruotare la scena</span>
+        <span class="pill">Linee: <span style="color:var(--node)">nodo (Ω)</span> · <span style="color:var(--peric)">pericentro (ω)</span></span>
+      </div>
+      <div class="stats" style="margin-top:8px">
         <div class="stat"><b id="lblBody">Terra</b><div class="muted">Corpo centrale</div></div>
         <div class="stat"><b id="lblV">—</b><div class="muted">Velocità istantanea</div></div>
         <div class="stat"><b id="lblT">—</b><div class="muted">Periodo T</div></div>
         <div class="stat"><b id="lblE">—</b><div class="muted">Eccentricità e</div></div>
       </div>
-
-      <h2 style="margin-top:10px">Simulazione 3D (ellisse con Ω, i, ω in rotazione)</h2>
-      <canvas id="orbCanvas"></canvas>
     </section>
   </main>
 
-  <script defer src="app.v6.js"></script>
+  <script defer src="app.v7.js"></script>
 </body>
 </html>
