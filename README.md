@@ -1,4 +1,4 @@
-# Orbita — Velocità & Periodo
+# Orbita — Velocità & Periodo (PWA in una cartella)
 
 App offline per calcolare **velocità orbitale** e **periodo** di un satellite in **orbita circolare**.
 
