@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Orbita — 3D (no SW)</title>
+  <title>Orbita — 3D ellittica (no SW)</title>
   <meta name="theme-color" content="#0b1b2b">
   <style>
     :root{--bg:#0b1b2b;--panel:#0f243a;--ink:#eaf2ff;--muted:#9fb6d1;--accent:#6fd3ff;--border:#24425f;}
@@ -30,18 +30,20 @@
     canvas{width:100%;height:auto;border-radius:12px;border:1px solid var(--border);background:#081522;display:block}
     .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
     .pill{padding:2px 8px;border-radius:999px;border:1px solid var(--border);color:#bcd1ea;font-size:12px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     @media (max-width:980px){main{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
   <header>
-    <h1>Orbita — 3D (no Service Worker)</h1>
-    <span class="tag">nessuna cache PWA</span>
+    <h1>Orbita — 3D ellittica (no Service Worker)</h1>
+    <span class="tag">Keplero • vis-viva • Ω i ω</span>
   </header>
 
   <main>
     <section class="card">
       <h2>Parametri</h2>
+
       <div class="row3">
         <div>
           <label for="bodySel">Corpo celeste</label>
@@ -50,69 +52,105 @@
         <div>
           <label for="preset">Preset</label>
           <select id="preset">
+            <option value="earthLEO">Terra — LEO 500 km</option>
+            <option value="earthGEO">Terra — GEO (a ≈ 42164 km)</option>
             <option value="custom">Personalizzato</option>
-            <option value="casio">CASIO FX-750P (1984)</option>
-            <option value="earth5500">Terra (moderni) + 5 500 km</option>
           </select>
         </div>
         <div>
-          <label for="alt_km">Quota (km)</label>
-          <input id="alt_km" type="number" value="5500" step="1">
+          <label for="mode">Orbita</label>
+          <select id="mode">
+            <option value="circular">Circolare</option>
+            <option value="elliptic" selected>Ellittica (rp/ra)</option>
+          </select>
         </div>
       </div>
 
-      <div class="row">
-        <div><label for="r_km">Raggio (km)</label><input id="r_km" type="number" value="6371"></div>
-        <div><label for="mass">Massa M (kg)</label><input id="mass" type="text" value="5.972e24"></div>
+      <div class="grid2" id="circularBox" style="display:none">
+        <div>
+          <label for="alt_km">Quota (km) — circolare</label>
+          <input id="alt_km" type="number" value="500" step="1">
+        </div>
+        <div>
+          <label for="r_km">Raggio del corpo (km)</label>
+          <input id="r_km" type="number" value="6371" step="1">
+        </div>
       </div>
 
-      <div class="row">
-        <div><label for="G">G (m³·kg⁻¹·s⁻²)</label><input id="G" type="text" value="6.67430e-11"></div>
-        <div><label for="precision">Cifre decimali</label><input id="precision" type="number" value="3" min="0" max="12"></div>
+      <div class="grid2" id="ellipticBox">
+        <div>
+          <label for="hp_km">Perigeo hp (km sopra superficie)</label>
+          <input id="hp_km" type="number" value="300">
+        </div>
+        <div>
+          <label for="ha_km">Apogeo ha (km sopra superficie)</label>
+          <input id="ha_km" type="number" value="10000">
+        </div>
       </div>
 
       <div class="row">
         <div>
-          <label><input id="useMu" type="checkbox"> Usa μ = G·M</label>
-          <input id="mu" type="text" placeholder="es. 3.986004418e14">
+          <label for="mass">Massa M (kg)</label>
+          <input id="mass" type="text" value="5.972e24">
         </div>
         <div>
-          <label for="incl">Inclinazione (°)</label>
-          <input id="incl" type="range" min="-90" max="90" value="35">
-          <div class="muted">Azimut (°): <input id="az" type="range" min="0" max="360" value="25"></div>
+          <label for="G">Costante G (m³·kg⁻¹·s⁻²)</label>
+          <input id="G" type="text" value="6.67430e-11">
         </div>
       </div>
 
       <div class="row">
+        <div>
+          <label><input id="useMu" type="checkbox" checked> Usa μ = G·M</label>
+          <input id="mu" type="text" value="3.986004418e14">
+        </div>
+        <div>
+          <label for="precision">Cifre decimali</label>
+          <input id="precision" type="number" value="3" min="0" max="12">
+        </div>
+      </div>
+
+      <h2>Orientamento orbitale (3D)</h2>
+      <div class="row3">
+        <div>
+          <label for="incl">Inclinazione i (°)</label>
+          <input id="incl" type="range" min="0" max="90" value="35">
+        </div>
+        <div>
+          <label for="raan">Nodo ascendente Ω (°)</label>
+          <input id="raan" type="range" min="0" max="360" value="40">
+        </div>
+        <div>
+          <label for="argp">Argomento del pericentro ω (°)</label>
+          <input id="argp" type="range" min="0" max="360" value="25">
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:8px">
         <button id="calcBtn">Calcola</button>
-        <button id="casioBtn" class="ghost">Preset CASIO</button>
+        <button id="playBtn">⏵︎ Avvia</button>
+        <button id="pauseBtn" class="ghost">⏸︎ Pausa</button>
+        <span class="pill">Velocità × <span id="spdTxt">60</span></span>
+        <input id="speed" type="range" min="0.1" max="400" value="60" step="0.1" style="width:200px">
       </div>
-      <p class="muted">v = √(μ/r) · T = 2πr/v — r = (R + quota)·1000.</p>
+      <p class="muted">Ellittica: si usano le equazioni di Keplero. Posizione parametrizzata da anomalia vera ν(t), con <em>n</em> = √(μ/a³).</p>
     </section>
 
     <section class="card">
       <h2>Risultati</h2>
       <div id="out" class="result"></div>
       <div class="stats">
-        <div class="stat"><b id="lblBody">—</b><div class="muted">Corpo centrale</div></div>
-        <div class="stat"><b id="lblSat">—</b><div class="muted">Satellite</div></div>
-        <div class="stat"><b id="lblV">—</b><div class="muted">Velocità orbitale</div></div>
-        <div class="stat"><b id="lblG">—</b><div class="muted">g a quota (m/s²)</div></div>
+        <div class="stat"><b id="lblBody">Terra</b><div class="muted">Corpo centrale</div></div>
+        <div class="stat"><b id="lblV">—</b><div class="muted">Velocità istantanea</div></div>
+        <div class="stat"><b id="lblT">—</b><div class="muted">Periodo T</div></div>
+        <div class="stat"><b id="lblE">—</b><div class="muted">Eccentricità e</div></div>
       </div>
 
-      <h2 style="margin-top:10px">Simulazione 3D (prospettiva)</h2>
+      <h2 style="margin-top:10px">Simulazione 3D (ellisse con Ω, i, ω)</h2>
       <canvas id="orbCanvas"></canvas>
-      <div class="controls">
-        <button id="playBtn">⏵︎ Avvia</button>
-        <button id="pauseBtn" class="ghost">⏸︎ Pausa</button>
-        <span class="pill">Velocità × <span id="spdTxt">30</span></span>
-        <input id="speed" type="range" min="0.1" max="200" value="30" step="0.1" style="width:200px">
-        <span class="pill">Inclinazione <span id="inclTxt">35</span>°</span>
-        <span class="pill">Azimut <span id="azTxt">25</span>°</span>
-      </div>
     </section>
   </main>
 
-  <script defer src="app.v4.js"></script>
+  <script defer src="app.v5.js"></script>
 </body>
 </html>
