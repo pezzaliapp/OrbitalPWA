@@ -5,7 +5,7 @@ const incl = el('incl'), raan = el('raan'), argp = el('argp');
 const iTxt = el('iTxt'), oTxt = el('oTxt'), wTxt = el('wTxt');
 const OmegaDot = el('OmegaDot'), omegaDot = el('omegaDot'), precessionOn = el('precessionOn');
 const calcBtn = el('calcBtn'), playBtn = el('playBtn'), pauseBtn = el('pauseBtn'), spd = el('speed'), spdTxt = el('spdTxt');
-const lblBody = el('lblBody'), lblV = el('lblV'), lblT = el('lblT'), lblE = el('lblE');
+const lblBody = el('lblBody'), lblV = el('lblV'), lblT = el('lblT'), lblE = el('lblE'), lblHPHA = el('lblHPHA'), lblRPRA = el('lblRPRA');
 
 const video = el('bgVideo'); const canvas = el('orbCanvas'); const ctx = canvas.getContext('2d');
 
@@ -118,7 +118,12 @@ function compute(){
   sim.a=a; sim.e=e; sim.mu=mu; sim.R=R; sim.n=n;
   sim.i=deg2rad(num(incl.value)); sim.Omega=deg2rad(num(raan.value)); sim.w=deg2rad(num(argp.value));
 
-  lblBody.textContent = body.name; lblT.textContent = hms(T); lblE.textContent = e.toFixed(4);
+  lblBody.textContent = body.name; lblT.textContent = hms(T);
+  const hp_km = ( (rp - R) / 1000 );
+  const ha_km = ( (ra - R) / 1000 );
+  lblHPHA.textContent = hp_km.toFixed(0)+' km / '+ha_km.toFixed(0)+' km';
+  lblRPRA.textContent = (rp/1000).toFixed(0)+' km / '+(ra/1000).toFixed(0)+' km';
+  lblE.textContent = e.toFixed(4);
   draw();
 }
 calcBtn.addEventListener('click', compute);
@@ -194,6 +199,19 @@ function draw(){
   back.forEach((p,i)=>{ if(i===0) ctx.moveTo(p.x,p.y); else ctx.lineTo(p.x,p.y); }); ctx.stroke();
   ctx.strokeStyle='rgba(111,211,255,0.9)'; ctx.beginPath();
   front.forEach((p,i)=>{ if(i===0) ctx.moveTo(p.x,p.y); else ctx.lineTo(p.x,p.y); }); ctx.stroke();
+
+
+  // Markers for perigeo (nu=0) and apogeo (nu=π)
+  function markerAt(nu, label, color){
+    const stM = orbitalPosition(sim.a, sim.e, nu);
+    const ECI_M = rotateToECI(stM.x, stM.y, 0, sim.Omega, sim.i, sim.w);
+    const PM = project3D(ECI_M.x*sim.scale, ECI_M.y*sim.scale, ECI_M.z*sim.scale, w,h);
+    ctx.fillStyle = color; ctx.strokeStyle = color;
+    ctx.beginPath(); ctx.arc(PM.x, PM.y, 4*(PM.s), 0, Math.PI*2); ctx.fill();
+    ctx.font='12px system-ui'; ctx.fillText(label, PM.x+6, PM.y-6);
+  }
+  markerAt(0, 'Perigeo', '#ffd36e');
+  markerAt(Math.PI, 'Apogeo', '#ffd36e');
 
   // Planet
   const planetR = 18;
