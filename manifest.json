@@ -1,6 +1,6 @@
 {
-  "name": "Orbita — Velocità, Periodo & Simulazione",
-  "short_name": "Orbita",
+  "name": "Orbita — 3D, Velocità, Periodo & PWA",
+  "short_name": "Orbita3D",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0b1b2b",
