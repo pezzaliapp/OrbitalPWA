@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OrbitalPWA — Documentazione</title>
+  <style>
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;background:#0b1b2b;color:#eaf2ff;line-height:1.6}
+    header{position:sticky;top:0;background:#0f243a;border-bottom:1px solid #24425f;padding:12px;display:flex;justify-content:space-between;align-items:center;z-index:10}
+    header h1{margin:0;font-size:18px;color:#cfe6ff}
+    header a.button{background:#6fd3ff;color:#00243a;padding:10px 16px;border-radius:10px;font-weight:700;text-decoration:none}
+    main{max-width:900px;margin:0 auto;padding:20px}
+    h2{margin-top:32px;color:#cfe6ff}
+    code{background:#163452;padding:2px 4px;border-radius:4px;font-family:monospace}
+    pre{background:#081522;padding:10px;border-radius:6px;overflow-x:auto}
+    a{color:#6fd3ff}
+    .muted{color:#9fb6d1}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>OrbitalPWA — Documentazione</h1>
+    <a href="https://www.alessandropezzali.it/OrbitalPWA/" class="button">🚀 Avvia la App</a>
+  </header>
+  <main>
+    <h2>Descrizione</h2>
+    <p><b>OrbitalPWA</b> è una Progressive Web App per lo studio di orbite circolari ed ellittiche, con visualizzazione 3D, parametri orbitali, precessione e modalità AR.</p>
+
+    <h2>Funzioni principali</h2>
+    <ul>
+      <li>Calcolo di <code>T</code>, velocità, eccentricità, <code>hp</code>/<code>ha</code>.</li>
+      <li>Orientamento 3D con <b>i</b>, <b>Ω</b>, <b>ω</b>.</li>
+      <li>Animazione del satellite lungo l’orbita con effetto prospettico.</li>
+      <li>Precessione dell’ellisse tramite Ω· e ω·.</li>
+      <li>Modalità AR: sfondo camera + rotazione con sensori.</li>
+    </ul>
+
+    <h2>Utilità per studi CubeSat</h2>
+    <ul>
+      <li>Dimensionamento preliminare delle orbite.</li>
+      <li>Visualizzazione intuitiva della geometria orbitale.</li>
+      <li>Dimostrazioni in AR per didattica e presentazioni.</li>
+      <li>Parte integrante della libreria <a href="https://github.com/pezzaliapp/pezzalistack.git">PezzaliStack</a>.</li>
+    </ul>
+
+    <h2>Guida rapida</h2>
+    <ol>
+      <li>Apri <code>index.html</code> o installa la PWA.</li>
+      <li>Seleziona il corpo centrale (Terra, Luna, Marte, Giove).</li>
+      <li>Definisci l’orbita tramite <code>hp</code>/<code>ha</code> o quota circolare.</li>
+      <li>Imposta <b>i</b>, <b>Ω</b>, <b>ω</b>.</li>
+      <li>Avvia l’animazione: osserva periodo, velocità, perigeo/apogeo.</li>
+      <li>Attiva la precessione o la modalità AR per l’effetto scenico.</li>
+    </ol>
+
+    <h2>Licenza e attribuzioni</h2>
+    <p>Rilasciato con licenza <b>MIT</b> (© 2025 Alessandro Pezzali).<br>
+    Parte della libreria <b><a href="https://github.com/pezzaliapp/pezzalistack.git">PezzaliStack</a></b>, strumenti open source per studi e simulazioni CubeSat.<br>
+    Dati planetari da fonti pubbliche standard (NASA, ESA).</p>
+  </main>
+</body>
+</html>
