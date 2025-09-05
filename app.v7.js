@@ -329,3 +329,13 @@ a2hsBtn?.addEventListener('click', async()=>{
 });
 (function(){ const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent); if(isIOS && !isStandalone()){ iosHint.style.display='inline'; a2hsBar.style.display='block'; } })();
 
+
+
+// Demo precessione
+document.getElementById('demoPre').addEventListener('click', ()=>{
+  OmegaDot.value = '8.0';
+  omegaDot.value = '25.0';
+  precessionOn.checked = true;
+  vizMode.value = 'real';
+  sim.running = true; sim.last = 0; requestAnimationFrame(step);
+});
