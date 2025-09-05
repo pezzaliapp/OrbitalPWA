@@ -1,60 +1,143 @@
 <!doctype html>
 <html lang="it">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Orbita — versione ultra minima</title>
-<style>
- body{font-family:system-ui,Arial,sans-serif;margin:20px;max-width:900px}
- h1{font-size:20px}
- fieldset{border:1px solid #ccc;border-radius:8px;padding:10px}
- label{display:block;margin:.4rem 0 .1rem}
- input,select,button{padding:8px;font-size:14px}
- .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
- pre{white-space:pre-wrap;background:#f5f5f7;padding:10px;border-radius:8px}
-</style>
-<h1>Orbita — velocità & periodo (ultra)</h1>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Orbita — Velocità, Periodo & Simulazione</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b1b2b">
+  <style>
+    :root{--bg:#0b1b2b;--panel:#10263d;--ink:#eaf2ff;--muted:#9fb6d1;--accent:#6fd3ff;--warn:#ffb4b4;}
+    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif}
+    body{margin:0;background:var(--bg);color:var(--ink);}
+    header{padding:18px 18px 8px;display:flex;gap:12px;align-items:center}
+    header h1{font-size:20px;margin:0;font-weight:700;letter-spacing:.2px}
+    header .tag{padding:2px 8px;border:1px solid #2f4d6a;border-radius:999px;color:var(--muted);font-size:12px}
+    main{max-width:1100px;margin:0 auto;padding:16px;display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+    .card{background:var(--panel);border:1px solid #24425f;border-radius:12px;padding:16px}
+    h2{margin:0 0 12px;font-size:16px;color:#cfe6ff}
+    label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+    input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #355a7c;background:#0d2237;color:var(--ink);font-size:14px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    button{appearance:none;background:var(--accent);color:#00243a;border:0;border-radius:10px;padding:12px 14px;font-weight:700;cursor:pointer}
+    .ghost{background:#163452;color:#cfe6ff;border:1px dashed #3e6d95}
+    .result{font-size:15px;line-height:1.4}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .muted{color:var(--muted)}
+    .warn{color:var(--warn)}
+    footer{max-width:1100px;margin:8px auto 48px;color:#8aa6c5;padding:0 16px}
+    details{margin-top:8px}
+    kbd{background:#00182a;color:#cfe6ff;border:1px solid #325a79;border-bottom-width:3px;border-radius:6px;padding:1px 6px;font-size:12px}
+    canvas{width:100%;height:auto;border-radius:12px;border:1px solid #24425f;background:#081522}
+    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+    .controls > *{margin:4px 0}
+    @media (max-width:980px){main{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header>
+    <img src="icons/icon-192.png" width="32" height="32" alt="logo">
+    <h1>Orbita — Velocità, Periodo & Simulazione</h1>
+    <span class="tag">PWA • offline</span>
+  </header>
 
-<fieldset>
- <legend>Parametri</legend>
- <div class="row">
-  <label>Preset
-   <select id="preset" onchange="setPreset(this.value); compute();">
-    <option value="casio">CASIO FX-750P (1984)</option>
-    <option value="earth">Terra (moderni) + 5500 km</option>
-   </select>
-  </label>
-  <label>Quota (km) <input id="alt_km" type="number" value="5500"></label>
-  <label>Raggio corpo (km) <input id="r_km" type="number" value="6400"></label>
-  <label>Massa M (kg) <input id="mass" type="text" value="6e24"></label>
-  <label>G (m^3 kg^-1 s^-2) <input id="G" type="text" value="6.67e-11"></label>
-  <label>Cifre decimali <input id="precision" type="number" value="3" min="0" max="12"></label>
- </div>
- <p><button id="calcBtn" onclick="compute()">Calcola</button></p>
-</fieldset>
+  <main>
+    <section class="card">
+      <h2>Parametri</h2>
 
-<h3>Risultati</h3>
-<div id="out">—</div>
-<details><summary>Dettagli</summary><pre id="work"></pre></details>
+      <div class="row3">
+        <div>
+          <label for="bodySel">Corpo celeste</label>
+          <select id="bodySel">
+            <option value="earth">Terra</option>
+            <option value="moon">Luna</option>
+            <option value="mars">Marte</option>
+            <option value="jupiter">Giove</option>
+          </select>
+        </div>
+        <div>
+          <label for="preset">Preset</label>
+          <select id="preset">
+            <option value="custom">Personalizzato</option>
+            <option value="casio">CASIO FX-750P (1984) — esempio</option>
+            <option value="earth5500">Terra (moderni) + 5 500 km</option>
+          </select>
+        </div>
+        <div>
+          <label for="alt_km">Quota sopra la superficie (km)</label>
+          <input id="alt_km" type="number" value="5500" step="1">
+        </div>
+      </div>
 
-<script>
-function num(v){return Number(String(v).trim().replace(',', '.'));}
-function fmt(x,p){if(!isFinite(x)) return '—'; if(Math.abs(x)>=1e4||Math.abs(x)<1e-2) return x.toExponential(p); return x.toLocaleString(undefined,{maximumFractionDigits:p});}
-function hms(sec){const s=Math.floor(sec%60);const m=Math.floor((sec/60)%60);const h=Math.floor(sec/3600);const frac=sec-Math.floor(sec);return `${h} h ${m} min ${(s+frac).toFixed(1)} s`;}
+      <div class="row">
+        <div>
+          <label for="r_km">Raggio del corpo (km)</label>
+          <input id="r_km" type="number" value="6371" step="1">
+        </div>
+        <div>
+          <label for="mass">Massa del corpo M (kg)</label>
+          <input id="mass" type="text" value="5.972e24">
+        </div>
+      </div>
 
-function setPreset(name){
- if(name==='casio'){ alt_km.value=5500; r_km.value=6400; mass.value='6e24'; G.value='6.67e-11'; }
- if(name==='earth'){ alt_km.value=5500; r_km.value=6371; mass.value='5.972e24'; G.value='6.67430e-11'; }
-}
+      <div class="row">
+        <div>
+          <label for="G">Costante G (m³·kg⁻¹·s⁻²)</label>
+          <input id="G" type="text" value="6.67430e-11">
+        </div>
+        <div>
+          <label for="precision">Cifre decimali</label>
+          <input id="precision" type="number" value="3" min="0" max="12">
+        </div>
+      </div>
 
-function compute(){
- const p=num(precision.value)||3;
- const Rkm=num(r_km.value), altkm=num(alt_km.value), M=num(mass.value), Gc=num(G.value);
- const r=(Rkm+(isFinite(altkm)?altkm:0))*1000, mu=Gc*M;
- const v=Math.sqrt(mu/r), T=2*Math.PI*r/v;
- out.innerHTML = `<div>raggio orbitale: <b>${fmt(r/1000,p)} km</b></div>
- <div>velocità: <b>${fmt(v,p)} m/s</b> (${fmt(v/1000,p)} km/s)</div>
- <div>periodo: <b>${fmt(T,p)} s</b> — ${hms(T)}</div>`;
- work.textContent = `μ=${mu.toExponential()}  r=${r.toExponential()} → v=${v.toExponential()}  T=${T.toExponential()}`;
-}
-setPreset('casio'); compute();
-</script>
+      <div class="row">
+        <div>
+          <label><input id="useMu" type="checkbox"> Usa μ = G·M direttamente</label>
+          <input id="mu" type="text" value="" placeholder="es. 3.986004418e14">
+          <p class="muted" style="margin:6px 0 0">Se spuntato, μ ha priorità su G e M.</p>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <div class="row" style="grid-template-columns:1fr 1fr;gap:8px">
+            <button id="calcBtn">Calcola</button>
+            <button id="casioBtn" class="ghost">Replica passaggi stile CASIO</button>
+          </div>
+        </div>
+      </div>
+
+      <p class="muted" style="margin-top:10px">
+        Orbita circolare: v = √(μ / r), &nbsp; μ = G·M &nbsp; · &nbsp; T = 2πr / v. <br>
+        r = (raggio del corpo + quota) · 1000 per passare in metri.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Risultati</h2>
+      <div id="out" class="result"></div>
+      <details>
+        <summary>Dettagli formula & sostituzione</summary>
+        <pre id="work" class="mono" style="white-space:pre-wrap"></pre>
+      </details>
+
+      <h2 style="margin-top:18px">Simulazione orbitale</h2>
+      <canvas id="orbCanvas" width="500" height="500"></canvas>
+      <div class="controls">
+        <button id="playBtn">⏵︎ Avvia</button>
+        <button id="pauseBtn" class="ghost">⏸︎ Pausa</button>
+        <label>Velocità simulazione (× tempo reale)
+          <input id="speed" type="range" min="0.1" max="200" value="30" step="0.1">
+        </label>
+        <span class="muted" id="simInfo"></span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Ispirato al manuale <em>CASIO FX-750P</em> (1984–85). Aggiunti: menù Terra/Luna/Marte/Giove, μ diretto e simulazione animata.</p>
+  </footer>
+
+  <script defer src="app.js"></script>
+</body>
+</html>
