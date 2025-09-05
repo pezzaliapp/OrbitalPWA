@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Orbita — 3D ellittica (no SW)</title>
+  <title>Orbita — v6 (ellisse 3D + precessione) — no SW</title>
   <meta name="theme-color" content="#0b1b2b">
   <style>
     :root{--bg:#0b1b2b;--panel:#0f243a;--ink:#eaf2ff;--muted:#9fb6d1;--accent:#6fd3ff;--border:#24425f;}
@@ -33,21 +33,12 @@
     .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     @media (max-width:980px){main{grid-template-columns:1fr}}
   </style>
-<link rel="manifest" href="manifest.json">
 </head>
 <body>
   <header>
-    <h1>Orbita — 3D ellittica (no Service Worker)</h1>
-    <span class="tag">Keplero • vis-viva • Ω i ω</span>
-  
-  <div id="a2hsBar" style="display:none;background:#0c1e32;color:#eaf2ff;border-top:1px solid #24425f;border-bottom:1px solid #24425f">
-    <div style="max-width:1200px;margin:0 auto;padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <span>📲 Installa l’app sulla Home per usarla offline.</span>
-      <button id="a2hsBtn" style="appearance:none;background:#6fd3ff;color:#00243a;border:0;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer">Aggiungi alla Home</button>
-      <span id="iosHint" style="display:none;color:#bcd1ea">Su iPhone/iPad: <b>Condividi</b> → <b>Aggiungi a Home</b>.</span>
-    </div>
-  </div>
-</header>
+    <h1>Orbita — v6 (ellisse 3D + precessione)</h1>
+    <span class="tag">no Service Worker</span>
+  </header>
 
   <main>
     <section class="card">
@@ -70,42 +61,24 @@
           <label for="mode">Orbita</label>
           <select id="mode">
             <option value="circular">Circolare</option>
-            <option value="elliptic" selected>Ellittica (rp/ra)</option>
+            <option value="elliptic" selected>Ellittica (hp/ha)</option>
           </select>
         </div>
       </div>
 
       <div class="grid2" id="circularBox" style="display:none">
-        <div>
-          <label for="alt_km">Quota (km) — circolare</label>
-          <input id="alt_km" type="number" value="500" step="1">
-        </div>
-        <div>
-          <label for="r_km">Raggio del corpo (km)</label>
-          <input id="r_km" type="number" value="6371" step="1">
-        </div>
+        <div><label for="alt_km">Quota (km) — circolare</label><input id="alt_km" type="number" value="500"></div>
+        <div><label for="r_km">Raggio del corpo (km)</label><input id="r_km" type="number" value="6371"></div>
       </div>
 
       <div class="grid2" id="ellipticBox">
-        <div>
-          <label for="hp_km">Perigeo hp (km sopra superficie)</label>
-          <input id="hp_km" type="number" value="300">
-        </div>
-        <div>
-          <label for="ha_km">Apogeo ha (km sopra superficie)</label>
-          <input id="ha_km" type="number" value="10000">
-        </div>
+        <div><label for="hp_km">Perigeo hp (km)</label><input id="hp_km" type="number" value="300"></div>
+        <div><label for="ha_km">Apogeo ha (km)</label><input id="ha_km" type="number" value="10000"></div>
       </div>
 
       <div class="row">
-        <div>
-          <label for="mass">Massa M (kg)</label>
-          <input id="mass" type="text" value="5.972e24">
-        </div>
-        <div>
-          <label for="G">Costante G (m³·kg⁻¹·s⁻²)</label>
-          <input id="G" type="text" value="6.67430e-11">
-        </div>
+        <div><label for="mass">Massa M (kg)</label><input id="mass" type="text" value="5.972e24"></div>
+        <div><label for="G">Costante G (m³·kg⁻¹·s⁻²)</label><input id="G" type="text" value="6.67430e-11"></div>
       </div>
 
       <div class="row">
@@ -113,26 +86,20 @@
           <label><input id="useMu" type="checkbox" checked> Usa μ = G·M</label>
           <input id="mu" type="text" value="3.986004418e14">
         </div>
-        <div>
-          <label for="precision">Cifre decimali</label>
-          <input id="precision" type="number" value="3" min="0" max="12">
-        </div>
+        <div><label for="precision">Cifre decimali</label><input id="precision" type="number" value="3" min="0" max="12"></div>
       </div>
 
-      <h2>Orientamento orbitale (3D)</h2>
+      <h2>Orientamento & Precessione</h2>
       <div class="row3">
-        <div>
-          <label for="incl">Inclinazione i (°)</label>
-          <input id="incl" type="range" min="0" max="90" value="35">
-        </div>
-        <div>
-          <label for="raan">Nodo ascendente Ω (°)</label>
-          <input id="raan" type="range" min="0" max="360" value="40">
-        </div>
-        <div>
-          <label for="argp">Argomento del pericentro ω (°)</label>
-          <input id="argp" type="range" min="0" max="360" value="25">
-        </div>
+        <div><label for="incl">Inclinazione i (°)</label><input id="incl" type="range" min="0" max="90" value="35"><div class="muted">i=<span id="iTxt">35</span>°</div></div>
+        <div><label for="raan">Nodo ascendente Ω (°)</label><input id="raan" type="range" min="0" max="360" value="40"><div class="muted">Ω=<span id="oTxt">40</span>°</div></div>
+        <div><label for="argp">Argomento del pericentro ω (°)</label><input id="argp" type="range" min="0" max="360" value="25"><div class="muted">ω=<span id="wTxt">25</span>°</div></div>
+      </div>
+
+      <div class="row3">
+        <div><label for="OmegaDot">Ω· (°/s)</label><input id="OmegaDot" type="number" value="0.0" step="0.1"></div>
+        <div><label for="omegaDot">ω· (°/s)</label><input id="omegaDot" type="number" value="10.0" step="0.1"></div>
+        <div><label><input id="precessionOn" type="checkbox" checked> Ruota l’ellisse</label></div>
       </div>
 
       <div class="row" style="margin-top:8px">
@@ -142,7 +109,6 @@
         <span class="pill">Velocità × <span id="spdTxt">60</span></span>
         <input id="speed" type="range" min="0.1" max="400" value="60" step="0.1" style="width:200px">
       </div>
-      <p class="muted">Ellittica: si usano le equazioni di Keplero. Posizione parametrizzata da anomalia vera ν(t), con <em>n</em> = √(μ/a³).</p>
     </section>
 
     <section class="card">
@@ -155,11 +121,11 @@
         <div class="stat"><b id="lblE">—</b><div class="muted">Eccentricità e</div></div>
       </div>
 
-      <h2 style="margin-top:10px">Simulazione 3D (ellisse con Ω, i, ω)</h2>
+      <h2 style="margin-top:10px">Simulazione 3D (ellisse con Ω, i, ω in rotazione)</h2>
       <canvas id="orbCanvas"></canvas>
     </section>
   </main>
 
-  <script defer src="app.v5.js"></script>
+  <script defer src="app.v6.js"></script>
 </body>
 </html>
