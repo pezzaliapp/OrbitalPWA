@@ -1,200 +1,60 @@
 <!doctype html>
 <html lang="it">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Orbita — Velocità & Periodo</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0b1b2b">
-  <style>
-    :root{--bg:#0b1b2b;--panel:#10263d;--ink:#eaf2ff;--muted:#9fb6d1;--accent:#6fd3ff;}
-    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif}
-    body{margin:0;background:var(--bg);color:var(--ink);}
-    header{padding:18px 18px 8px;display:flex;gap:12px;align-items:center}
-    header h1{font-size:20px;margin:0;font-weight:700;letter-spacing:.2px}
-    header .tag{padding:2px 8px;border:1px solid #2f4d6a;border-radius:999px;color:var(--muted);font-size:12px}
-    main{max-width:980px;margin:0 auto;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .card{background:var(--panel);border:1px solid #24425f;border-radius:12px;padding:16px}
-    h2{margin:0 0 12px;font-size:16px;color:#cfe6ff}
-    label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
-    input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #355a7c;background:#0d2237;color:var(--ink);font-size:14px}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    button{appearance:none;background:var(--accent);color:#00243a;border:0;border-radius:10px;padding:12px 14px;font-weight:700;cursor:pointer}
-    .ghost{background:#163452;color:#cfe6ff;border:1px dashed #3e6d95}
-    .result{font-size:15px;line-height:1.4}
-    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
-    .muted{color:var(--muted)}
-    footer{max-width:980px;margin:8px auto 48px;color:#8aa6c5;padding:0 16px}
-    details{margin-top:8px}
-    kbd{background:#00182a;color:#cfe6ff;border:1px solid #325a79;border-bottom-width:3px;border-radius:6px;padding:1px 6px;font-size:12px}
-    @media (max-width:860px){main{grid-template-columns:1fr}}
-  </style>
-</head>
-<body>
-  <header>
-    <img src="icons/icon-192.png" width="32" height="32" alt="logo">
-    <h1>Orbita — Velocità & Periodo</h1>
-    <span class="tag">PWA • offline</span>
-  </header>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbita — versione ultra minima</title>
+<style>
+ body{font-family:system-ui,Arial,sans-serif;margin:20px;max-width:900px}
+ h1{font-size:20px}
+ fieldset{border:1px solid #ccc;border-radius:8px;padding:10px}
+ label{display:block;margin:.4rem 0 .1rem}
+ input,select,button{padding:8px;font-size:14px}
+ .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+ pre{white-space:pre-wrap;background:#f5f5f7;padding:10px;border-radius:8px}
+</style>
+<h1>Orbita — velocità & periodo (ultra)</h1>
 
-  <main>
-    <section class="card">
-      <h2>Parametri</h2>
+<fieldset>
+ <legend>Parametri</legend>
+ <div class="row">
+  <label>Preset
+   <select id="preset" onchange="setPreset(this.value); compute();">
+    <option value="casio">CASIO FX-750P (1984)</option>
+    <option value="earth">Terra (moderni) + 5500 km</option>
+   </select>
+  </label>
+  <label>Quota (km) <input id="alt_km" type="number" value="5500"></label>
+  <label>Raggio corpo (km) <input id="r_km" type="number" value="6400"></label>
+  <label>Massa M (kg) <input id="mass" type="text" value="6e24"></label>
+  <label>G (m^3 kg^-1 s^-2) <input id="G" type="text" value="6.67e-11"></label>
+  <label>Cifre decimali <input id="precision" type="number" value="3" min="0" max="12"></label>
+ </div>
+ <p><button id="calcBtn" onclick="compute()">Calcola</button></p>
+</fieldset>
 
-      <div class="row">
-        <div>
-          <label for="preset">Preset</label>
-          <select id="preset">
-            <option value="casio">CASIO FX‑750P (1984) — esempio</option>
-            <option value="earth5500">Terra (moderni) + 5 500 km</option>
-            <option value="earthCustom">Terra (moderni) — quota personalizzata</option>
-            <option value="custom">Personalizzato (G · M)</option>
-          </select>
-        </div>
-        <div>
-          <label for="alt_km">Quota sopra la superficie (km)</label>
-          <input id="alt_km" type="number" value="5500" step="1">
-        </div>
-      </div>
+<h3>Risultati</h3>
+<div id="out">—</div>
+<details><summary>Dettagli</summary><pre id="work"></pre></details>
 
-      <div class="row">
-        <div>
-          <label for="r_km">Raggio del corpo (km)</label>
-          <input id="r_km" type="number" value="6400" step="1">
-        </div>
-        <div>
-          <label for="mass">Massa del corpo M (kg)</label>
-          <input id="mass" type="number" value="6e24" step="any">
-        </div>
-      </div>
+<script>
+function num(v){return Number(String(v).trim().replace(',', '.'));}
+function fmt(x,p){if(!isFinite(x)) return '—'; if(Math.abs(x)>=1e4||Math.abs(x)<1e-2) return x.toExponential(p); return x.toLocaleString(undefined,{maximumFractionDigits:p});}
+function hms(sec){const s=Math.floor(sec%60);const m=Math.floor((sec/60)%60);const h=Math.floor(sec/3600);const frac=sec-Math.floor(sec);return `${h} h ${m} min ${(s+frac).toFixed(1)} s`;}
 
-      <div class="row">
-        <div>
-          <label for="G">Costante G (m³·kg⁻¹·s⁻²)</label>
-          <input id="G" type="number" value="6.67e-11" step="any">
-        </div>
-        <div>
-          <label for="precision">Cifre decimali</label>
-          <input id="precision" type="number" value="3" min="0" max="12">
-        </div>
-      </div>
+function setPreset(name){
+ if(name==='casio'){ alt_km.value=5500; r_km.value=6400; mass.value='6e24'; G.value='6.67e-11'; }
+ if(name==='earth'){ alt_km.value=5500; r_km.value=6371; mass.value='5.972e24'; G.value='6.67430e-11'; }
+}
 
-      <div class="row">
-        <button id="calcBtn">Calcola</button>
-        <button id="casioBtn" class="ghost">Replica passaggi stile CASIO</button>
-      </div>
-
-      <p class="muted" style="margin-top:10px">
-        Modello in orbita circolare: v = √(G·M / r) &nbsp;·&nbsp; T = 2πr / v. <br>
-        r = (raggio del corpo + quota) · 1000 per passare in metri.
-      </p>
-    </section>
-
-    <section class="card">
-      <h2>Risultati</h2>
-      <div id="out" class="result"></div>
-      <details>
-        <summary>Dettagli formula & sostituzione</summary>
-        <pre id="work" class="mono" style="white-space:pre-wrap"></pre>
-      </details>
-    </section>
-  </main>
-
-  <footer>
-    <p>
-      Ispirato all’esempio del manuale <em>CASIO FX‑750P</em> (1984–85).<br>
-      Aggiornato con costanti moderne e con possibilità di scegliere masse/raggi personalizzati.
-    </p>
-    <p class="muted">Suggerimento: aggiungi la pagina alla Home per usarla offline (PWA).</p>
-  </footer>
-
-  <script>
-    const el = id => document.getElementById(id);
-    const preset = el('preset'), alt = el('alt_km'), rkm = el('r_km'), mass = el('mass'), G = el('G');
-    const out = el('out'), work = el('work'), precision = el('precision');
-
-    const MODERN = {
-      G: 6.67430e-11,
-      earth: { Rkm: 6371.0, M: 5.972e24 },
-    };
-
-    function setPreset(name){
-      if(name==='casio'){
-        alt.value = 5500;
-        rkm.value = 6400;
-        mass.value = 6e24;
-        G.value = 6.67e-11;
-      }else if(name==='earth5500'){
-        alt.value = 5500;
-        rkm.value = MODERN.earth.Rkm;
-        mass.value = MODERN.earth.M;
-        G.value   = MODERN.G;
-      }else if(name==='earthCustom'){
-        rkm.value = MODERN.earth.Rkm;
-        mass.value = MODERN.earth.M;
-        G.value   = MODERN.G;
-      }
-    }
-    preset.addEventListener('change', e => setPreset(e.target.value));
-
-    function fmt(x, p){
-      if(!isFinite(x)) return '—';
-      if(Math.abs(x)>=1e4 || Math.abs(x)<1e-2) return x.toExponential(p);
-      return x.toLocaleString(undefined,{maximumFractionDigits:p});
-    }
-    function hms(seconds){
-      const s = Math.floor(seconds % 60);
-      const m = Math.floor((seconds / 60) % 60);
-      const h = Math.floor(seconds / 3600);
-      const frac = seconds - Math.floor(seconds);
-      const sPrec = (s + frac).toFixed(1);
-      return `${h} h ${m} min ${sPrec} s`;
-    }
-
-    function compute(){
-      const p = Number(precision.value)||3;
-      const Rkm = Number(rkm.value);
-      const altkm = Number(alt.value);
-      const M = Number(mass.value);
-      const Gc = Number(G.value);
-
-      const r = (Rkm + (isFinite(altkm)?altkm:0)) * 1000; // m
-      const mu = Gc * M; // m^3/s^2
-
-      const v = Math.sqrt(mu / r); // m/s
-      const T = 2 * Math.PI * r / v; // s
-
-      const vkms = v/1000;
-      const rkm = r/1000;
-
-      out.innerHTML = `
-        <div>Raggio orbitale <span class="mono">${fmt(rkm,p)} km</span></div>
-        <div>Velocità orbitale <strong class="mono">${fmt(v,p)} m/s</strong> (<span class="mono">${fmt(vkms,p)} km/s</span>)</div>
-        <div>Periodo <strong class="mono">${fmt(T,p)} s</strong> — <span class="mono">${hms(T)}</span></div>
-      `;
-
-      work.textContent =
-`v = √(G·M / r),  T = 2πr / v
-Dati: G = ${Gc},  M = ${M},  r = (${Rkm} + ${isFinite(altkm)?altkm:0})·10³ = ${r.toExponential()} m
-⇒ μ = G·M = ${(mu).toExponential()} m³/s²
-⇒ v = √(μ / r) = √(${(mu).toExponential()} / ${(r).toExponential()}) = ${v.toExponential()} m/s
-⇒ T = 2πr / v = ${T.toExponential()} s  ≈  ${hms(T)}`;
-    }
-
-    el('calcBtn').addEventListener('click', compute);
-    el('casioBtn').addEventListener('click', ()=>{
-      setPreset('casio'); compute();
-    });
-
-    // initial
-    setPreset('casio'); compute();
-
-    // PWA
-    if('serviceWorker' in navigator){
-      window.addEventListener('load', ()=>{
-        navigator.serviceWorker.register('sw.js');
-      });
-    }
-  </script>
-</body>
-</html>
+function compute(){
+ const p=num(precision.value)||3;
+ const Rkm=num(r_km.value), altkm=num(alt_km.value), M=num(mass.value), Gc=num(G.value);
+ const r=(Rkm+(isFinite(altkm)?altkm:0))*1000, mu=Gc*M;
+ const v=Math.sqrt(mu/r), T=2*Math.PI*r/v;
+ out.innerHTML = `<div>raggio orbitale: <b>${fmt(r/1000,p)} km</b></div>
+ <div>velocità: <b>${fmt(v,p)} m/s</b> (${fmt(v/1000,p)} km/s)</div>
+ <div>periodo: <b>${fmt(T,p)} s</b> — ${hms(T)}</div>`;
+ work.textContent = `μ=${mu.toExponential()}  r=${r.toExponential()} → v=${v.toExponential()}  T=${T.toExponential()}`;
+}
+setPreset('casio'); compute();
+</script>
