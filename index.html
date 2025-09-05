@@ -3,8 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Orbita — 3D, Velocità, Periodo & PWA</title>
-  <link rel="manifest" href="manifest.json">
+  <title>Orbita — 3D (no SW)</title>
   <meta name="theme-color" content="#0b1b2b">
   <style>
     :root{--bg:#0b1b2b;--panel:#0f243a;--ink:#eaf2ff;--muted:#9fb6d1;--accent:#6fd3ff;--border:#24425f;}
@@ -36,9 +35,8 @@
 </head>
 <body>
   <header>
-    <img src="icons/icon-192.png" width="28" height="28" alt="logo">
-    <h1>Orbita — 3D, Velocità, Periodo & PWA</h1>
-    <span class="tag">responsive • offline</span>
+    <h1>Orbita — 3D (no Service Worker)</h1>
+    <span class="tag">nessuna cache PWA</span>
   </header>
 
   <main>
@@ -53,46 +51,33 @@
           <label for="preset">Preset</label>
           <select id="preset">
             <option value="custom">Personalizzato</option>
-            <option value="casio">CASIO FX-750P (1984) — esempio</option>
+            <option value="casio">CASIO FX-750P (1984)</option>
             <option value="earth5500">Terra (moderni) + 5 500 km</option>
           </select>
         </div>
         <div>
-          <label for="alt_km">Quota sopra la superficie (km)</label>
+          <label for="alt_km">Quota (km)</label>
           <input id="alt_km" type="number" value="5500" step="1">
         </div>
       </div>
 
       <div class="row">
-        <div>
-          <label for="r_km">Raggio del corpo (km)</label>
-          <input id="r_km" type="number" value="6371" step="1">
-        </div>
-        <div>
-          <label for="mass">Massa del corpo M (kg)</label>
-          <input id="mass" type="text" value="5.972e24">
-        </div>
+        <div><label for="r_km">Raggio (km)</label><input id="r_km" type="number" value="6371"></div>
+        <div><label for="mass">Massa M (kg)</label><input id="mass" type="text" value="5.972e24"></div>
+      </div>
+
+      <div class="row">
+        <div><label for="G">G (m³·kg⁻¹·s⁻²)</label><input id="G" type="text" value="6.67430e-11"></div>
+        <div><label for="precision">Cifre decimali</label><input id="precision" type="number" value="3" min="0" max="12"></div>
       </div>
 
       <div class="row">
         <div>
-          <label for="G">Costante G (m³·kg⁻¹·s⁻²)</label>
-          <input id="G" type="text" value="6.67430e-11">
+          <label><input id="useMu" type="checkbox"> Usa μ = G·M</label>
+          <input id="mu" type="text" placeholder="es. 3.986004418e14">
         </div>
         <div>
-          <label for="precision">Cifre decimali</label>
-          <input id="precision" type="number" value="3" min="0" max="12">
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label><input id="useMu" type="checkbox"> Usa μ = G·M direttamente</label>
-          <input id="mu" type="text" value="" placeholder="es. 3.986004418e14">
-          <p class="muted" style="margin:6px 0 0">Se spuntato, μ ha priorità su G e M.</p>
-        </div>
-        <div>
-          <label for="incl">Inclinazione orbita (°)</label>
+          <label for="incl">Inclinazione (°)</label>
           <input id="incl" type="range" min="-90" max="90" value="35">
           <div class="muted">Azimut (°): <input id="az" type="range" min="0" max="360" value="25"></div>
         </div>
@@ -100,12 +85,9 @@
 
       <div class="row">
         <button id="calcBtn">Calcola</button>
-        <button id="casioBtn" class="ghost">Replica passaggi stile CASIO</button>
+        <button id="casioBtn" class="ghost">Preset CASIO</button>
       </div>
-
-      <p class="muted" style="margin-top:10px">
-        Orbita circolare: v = √(μ / r), μ = G·M, T = 2πr / v — r = (R + quota)·1000.
-      </p>
+      <p class="muted">v = √(μ/r) · T = 2πr/v — r = (R + quota)·1000.</p>
     </section>
 
     <section class="card">
@@ -131,10 +113,6 @@
     </section>
   </main>
 
-  <footer class="muted" style="padding:10px 16px;max-width:1200px;margin:0 auto 16px">
-    Colori per pianeti/satelliti: Terra=blu, Luna=grigio, Marte=rosso, Giove=arancio. PWA installabile (offline).
-  </footer>
-
-  <script defer src="app.js"></script>
+  <script defer src="app.v4.js"></script>
 </body>
 </html>
