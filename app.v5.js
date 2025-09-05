@@ -207,3 +207,6 @@ document.getElementById('pauseBtn').addEventListener('click', ()=>{ sim.running=
 fitCanvas();
 setPreset('earthLEO');
 compute();
+
+// PWA installabile
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js'));}

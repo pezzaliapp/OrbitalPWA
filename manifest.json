@@ -1,5 +1,5 @@
 {
-  "name": "Orbita — 3D, Velocità, Periodo & PWA",
+  "name": "Orbita — 3D ellittica (PWA)",
   "short_name": "Orbita3D",
   "start_url": ".",
   "display": "standalone",
